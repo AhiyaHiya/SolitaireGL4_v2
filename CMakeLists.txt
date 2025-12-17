@@ -1,0 +1,50 @@
+cmake_minimum_required(VERSION 3.24)
+project(Solitaire LANGUAGES C CXX)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_COMPILER "g++" CACHE STRING "C++ compiler" FORCE)
+set(CMAKE_C_COMPILER "gcc" CACHE STRING "C compiler" FORCE)
+
+# --------------------- Dependencies ---------------------
+find_package(glfw3  CONFIG REQUIRED)
+
+# Download CPM.cmake
+file(
+  DOWNLOAD
+  https://github.com/cpm-cmake/CPM.cmake/releases/download/v0.40.8/CPM.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake
+  EXPECTED_HASH SHA256=78ba32abdf798bc616bab7c73aac32a17bbd7b06ad9e26a6add69de8f3ae4791
+)
+include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
+
+# Now download the other headers/libraries
+include(CMake/glad.cmake)
+include(CMake/stb.cmake)
+CPMAddPackage("gh:nlohmann/json@3.11.3")
+CPMAddPackage("gh:google/googletest@1.17.0")
+
+# --------------------- Executable ---------------------
+set(game_base_directory ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_executable(solitaire
+        Game/main.cpp
+)
+
+target_compile_features(solitaire PUBLIC cxx_std_23)
+
+target_link_libraries(solitaire
+    PRIVATE
+        glfw
+        glad
+        stb
+
+        nlohmann_json::nlohmann_json
+)
+
+target_link_options(solitaire
+    PRIVATE
+        "-Wl,-rpath,/usr/local/gcc-15/lib64"
+)
+
