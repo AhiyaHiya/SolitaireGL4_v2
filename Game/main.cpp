@@ -47,6 +47,16 @@ int main()
            GLAD_VERSION_MAJOR(opengl_version),
            GLAD_VERSION_MINOR(opengl_version));
 
+    while (!glfwWindowShouldClose(window.get()))
+    {
+        // Boilerplate code for now
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glfwSwapBuffers(window.get());
+        glfwPollEvents();
+    }
+
     glfwTerminate();
     return no_error;
 }
