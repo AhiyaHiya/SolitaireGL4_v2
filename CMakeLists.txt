@@ -26,10 +26,13 @@ CPMAddPackage("gh:nlohmann/json@3.11.3")
 CPMAddPackage("gh:google/googletest@1.17.0")
 
 # --------------------- Executable ---------------------
-set(game_base_directory ${CMAKE_CURRENT_SOURCE_DIR})
+set(GAME_BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(solitaire
+        Game/JSON.cpp
+        Game/JSON.hpp
         Game/main.cpp
+        Game/Types.hpp
         Game/Window.cpp
         Game/Window.hpp
 )
@@ -51,3 +54,7 @@ target_link_options(solitaire
         "-Wl,-rpath,/usr/local/gcc-15/lib64"
 )
 
+# --------------------- Tests ---------------------
+enable_testing()
+include(GoogleTest)
+add_subdirectory(Game/Tests)

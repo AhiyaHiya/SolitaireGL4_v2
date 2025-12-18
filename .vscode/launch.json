@@ -44,7 +44,7 @@
       "name": "Run Tests (LLDB)",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceFolder}/build/Game/Tests/cards_tests",
+      "program": "${workspaceFolder}/build/Game/Tests/SolitaireTests",
       "args": [],
       "cwd": "${workspaceFolder}",
       "stopOnEntry": false,
