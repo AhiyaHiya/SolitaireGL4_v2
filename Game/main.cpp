@@ -37,7 +37,15 @@ int main()
     auto window = window_result.value();
     glfwMakeContextCurrent(window.get());
 
-    
+    const auto opengl_version = gladLoadGL(glfwGetProcAddress);
+    if (opengl_version == 0)
+    {
+        std::cerr << "Failed to initialize OpenGL context\n";
+        return generic_error;
+    }
+    printf("Loaded OpenGL %d.%d\n",
+           GLAD_VERSION_MAJOR(opengl_version),
+           GLAD_VERSION_MINOR(opengl_version));
 
     glfwTerminate();
     return no_error;
