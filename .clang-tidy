@@ -1,4 +1,4 @@
-Checks:          '-portability-avoid-pragma-once,clang-analyzer-alpha.*,-clang-analyzer-alpha.deadcode.UnreachableCode,-clang-analyzer-core.CallAndMessage,-clang-analyzer-cplusplus.NewDeleteLeaks,misc-forward-declaration-namespace,modernize-use-auto,modernize-use-nullptr,modernize-redundant-void-arg,readability-inconsistent-declaration-parameter-name,readability-simplify-boolean-expr,readability-container-size-empty,performance-for-range-copy,readability-identifier-naming,modernize-use-override,google-explicit-constructor'
+Checks:          '-llvmlibc-*,-portability-avoid-pragma-once,clang-analyzer-alpha.*,-clang-analyzer-alpha.deadcode.UnreachableCode,-clang-analyzer-core.CallAndMessage,-clang-analyzer-cplusplus.NewDeleteLeaks,misc-forward-declaration-namespace,modernize-use-auto,modernize-use-nullptr,modernize-redundant-void-arg,readability-inconsistent-declaration-parameter-name,readability-simplify-boolean-expr,readability-container-size-empty,performance-for-range-copy,readability-identifier-naming,modernize-use-override,google-explicit-constructor'
 CheckOptions:
     - key: modernize-use-auto.MinTypeNameLength
       value: '10'
