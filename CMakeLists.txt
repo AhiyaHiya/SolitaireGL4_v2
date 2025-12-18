@@ -30,6 +30,8 @@ set(game_base_directory ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(solitaire
         Game/main.cpp
+        Game/Window.cpp
+        Game/Window.hpp
 )
 
 target_compile_features(solitaire PUBLIC cxx_std_23)
@@ -43,6 +45,7 @@ target_link_libraries(solitaire
         nlohmann_json::nlohmann_json
 )
 
+# Needed so that when app starts up, it can locate the shared libraries
 target_link_options(solitaire
     PRIVATE
         "-Wl,-rpath,/usr/local/gcc-15/lib64"
