@@ -13,7 +13,7 @@ constexpr auto no_error      = 0;
 /// @return 0 for no error, everything else is error
 int main()
 {
-    if (!glfwInit())
+    if (glfwInit() == GLFW_FALSE)
     {
         std::cerr << "Failed to initialize GLFW\n";
         return generic_error;
