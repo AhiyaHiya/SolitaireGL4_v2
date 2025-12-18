@@ -2,8 +2,8 @@
     "files.associations": {
         "system_error": "cpp"
     },
-
     // Optional: run clang-tidy automatically as a task instead of on-save
     "C_Cpp.autocomplete": "default",
-    "C_Cpp.errorSquiggles": "enabled"
+    "C_Cpp.errorSquiggles": "enabled",
+    "editor.formatOnSave": true
 }
