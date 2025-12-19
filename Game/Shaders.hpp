@@ -14,5 +14,5 @@
 /// @param shader_path e.g. "Shaders/card.vert"
 /// @param shader_type e.g. GL_VERTEX_SHADER or GL_FRAGMENT_SHADER
 /// @return The id of the shader compiled or an error message
-auto compile_card_shader(const std::filesystem::path& shader_path, GLenum shader_type)
+auto compile_shader(const std::filesystem::path& shader_path, GLenum shader_type)
     -> std::expected<GLuint, error_message_t>;
