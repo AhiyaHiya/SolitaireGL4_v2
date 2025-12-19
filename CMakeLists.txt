@@ -31,9 +31,13 @@ set(GAME_BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 add_executable(solitaire
         Game/CardRenderer.cpp
         Game/CardRenderer.hpp
+        Game/File.cpp
+        Game/File.hpp
         Game/JSON.cpp
         Game/JSON.hpp
         Game/main.cpp
+        Game/Shaders.cpp
+        Game/Shaders.hpp
         Game/Types.hpp
         Game/Window.cpp
         Game/Window.hpp

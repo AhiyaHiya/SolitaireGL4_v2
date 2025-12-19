@@ -1,6 +1,8 @@
 add_executable(SolitaireTests
-    JSONTests.cpp
+    "${GAME_BASE_DIRECTORY}/Game/File.cpp"
     "${GAME_BASE_DIRECTORY}/Game/JSON.cpp"
+    FileTests.cpp
+    JSONTests.cpp
 )
 
 gtest_add_tests(TARGET SolitaireTests)
@@ -32,5 +34,14 @@ add_custom_command(
             ${GAME_BASE_DIRECTORY}/Assets
             $<TARGET_FILE_DIR:SolitaireTests>/Assets
     COMMENT "Copying Assets folder to output directory"
+)
+
+# --------------------- Copy test data ---------------------
+add_custom_command(
+    TARGET SolitaireTests POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${GAME_BASE_DIRECTORY}/Game/Tests/TestData
+            $<TARGET_FILE_DIR:SolitaireTests>/Game/Tests/TestData
+    COMMENT "Copying Game/Tests/TestData folder to output directory"
 )
 
