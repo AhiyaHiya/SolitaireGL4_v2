@@ -29,6 +29,8 @@ CPMAddPackage("gh:google/googletest@1.17.0")
 set(GAME_BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(solitaire
+        Game/CardRenderer.cpp
+        Game/CardRenderer.hpp
         Game/JSON.cpp
         Game/JSON.hpp
         Game/main.cpp
