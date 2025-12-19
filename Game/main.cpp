@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h> // Ordering is important and this file must be included after glad
 // clang-format on
 
+#include "Shaders.hpp"
 #include "Window.hpp"
 
 #include <iostream>
@@ -46,6 +47,17 @@ int main()
     printf("Loaded OpenGL %d.%d\n",
            GLAD_VERSION_MAJOR(opengl_version),
            GLAD_VERSION_MINOR(opengl_version));
+
+    // Create buffers
+    // Compile program
+    auto program_result = create_program();
+    if (!program_result)
+    {
+        std::cerr << "Failed to create shader program: " << program_result.error() << "\n";
+        return generic_error;
+    }
+    auto program_id = program_result.value();
+    glUseProgram(program_id);
 
     while (!glfwWindowShouldClose(window.get()))
     {
