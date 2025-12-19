@@ -39,6 +39,8 @@ add_executable(solitaire
         Game/Shaders.cpp
         Game/Shaders.hpp
         Game/Types.hpp
+        Game/VertexBuffer.cpp
+        Game/VertexBuffer.hpp
         Game/Window.cpp
         Game/Window.hpp
 )
