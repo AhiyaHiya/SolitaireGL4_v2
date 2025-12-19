@@ -6,3 +6,15 @@ auto compile_shader(const std::filesystem::path& shader_path, GLenum shader_type
     // Not implemented yet
     return std::unexpected("Not implemented yet");
 }
+
+auto compile_shaders() -> std::expected<std::pair<GLuint, GLuint>, error_message_t>
+{
+    // Not implemented yet
+    return std::unexpected("Not implemented yet");
+}
+
+auto create_program() -> std::expected<GLuint, error_message_t>
+{
+    // Not implemented yet
+    return std::unexpected("Not implemented yet");
+}

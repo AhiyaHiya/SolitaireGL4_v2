@@ -16,3 +16,11 @@
 /// @return The id of the shader compiled or an error message
 auto compile_shader(const std::filesystem::path& shader_path, GLenum shader_type)
     -> std::expected<GLuint, error_message_t>;
+
+/// @brief Attempts to compile vertext and fragment shaders
+/// @return Returns <vertext id and fragment id> or an error message
+auto compile_shaders() -> std::expected<std::pair<GLuint, GLuint>, error_message_t>;
+
+/// @brief Attempts to create a shader program
+/// @return The program id or an error message
+auto create_program() -> std::expected<GLuint, error_message_t>;
