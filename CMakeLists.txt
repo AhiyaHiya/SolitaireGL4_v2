@@ -60,3 +60,12 @@ target_link_options(solitaire
 enable_testing()
 include(GoogleTest)
 add_subdirectory(Game/Tests)
+
+# --------------------- Copy assets ---------------------
+add_custom_command(
+    TARGET solitaire POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/Assets
+            $<TARGET_FILE_DIR:solitaire>/Assets
+    COMMENT "Copying Assets folder to output directory"
+)
