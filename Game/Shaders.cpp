@@ -24,6 +24,21 @@ auto compile_shader(const std::filesystem::path& shader_path, GLenum shader_type
     glShaderSource(shader_id, shader_count, &shader_src_ptr, nullptr);
     glCompileShader(shader_id);
 
+    // Check compilation status
+    auto compile_status = GLint(0);
+    glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compile_status);
+    if (compile_status != GL_TRUE)
+    {
+        // Get the error message
+        auto       log_length  = GLsizei(0);
+        const auto buffer_size = GLsizei(1024);
+        auto       info_log    = std::string(buffer_size, '\0');
+        glGetShaderInfoLog(shader_id, buffer_size, &log_length, info_log.data());
+
+        // Delete the shader since we have a failed status
+        glDeleteShader(shader_id);
+        return std::unexpected("Shader compilation failed: " + info_log);
+    }
     return shader_id;
 }
 
@@ -61,6 +76,9 @@ auto create_program() -> std::expected<GLuint, error_message_t>
     glAttachShader(program_id, vertex_shader_id);
     glAttachShader(program_id, fragment_shader_id);
     glLinkProgram(program_id);
+
+    glDeleteShader(vertex_shader_id);
+    glDeleteShader(fragment_shader_id);
 
     auto program_linked = GLint();
     glGetProgramiv(program_id, GL_LINK_STATUS, &program_linked);
