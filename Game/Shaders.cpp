@@ -84,10 +84,12 @@ auto create_program() -> std::expected<GLuint, error_message_t>
     glGetProgramiv(program_id, GL_LINK_STATUS, &program_linked);
     if (program_linked != GL_TRUE)
     {
-        auto       log_length  = GLsizei(0);
-        const auto size        = 1024;
-        auto       err_message = std::string(size, '\0');
-        glGetProgramInfoLog(program_id, size, &log_length, err_message.data());
+        // Get the size of the error message
+        auto log_length = GLsizei(0);
+        glGetProgramInfoLog(program_id, 0, &log_length, nullptr);
+
+        auto err_message = std::string(log_length, '\0');
+        glGetProgramInfoLog(program_id, log_length, &log_length, err_message.data());
         return std::unexpected(err_message);
     }
 
