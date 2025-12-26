@@ -3,7 +3,9 @@
 #include <GLFW/glfw3.h> // Ordering is important and this file must be included after glad
 // clang-format on
 
+#include "CardRenderer.hpp"
 #include "Shaders.hpp"
+#include "VertexBuffer.hpp"
 #include "Window.hpp"
 
 #include <iostream>
@@ -48,7 +50,6 @@ int main()
            GLAD_VERSION_MAJOR(opengl_version),
            GLAD_VERSION_MINOR(opengl_version));
 
-    // Create buffers
     // Compile program
     auto program_result = create_program();
     if (!program_result)
@@ -58,6 +59,23 @@ int main()
     }
     auto program_id = program_result.value();
     glUseProgram(program_id);
+
+    // Create buffers
+    auto vao_vbo_result = create_vao_vbo();
+    if (!vao_vbo_result)
+    {
+        std::cerr << "Failed to create VAO/VBO: " + vao_vbo_result.error() << "\n";
+        return generic_error;
+    }
+    auto [vao_id, vbo_id] = vao_vbo_result.value();
+
+    auto card_renderer_result = create_card_renderer(program_id, vao_id, vbo_id);
+    if (!card_renderer_result)
+    {
+        std::cerr << "Failed to create card renderer: " << card_renderer_result.error() << "\n";
+        return generic_error;
+    }
+    auto card_renderer = card_renderer_result.value();
 
     while (!glfwWindowShouldClose(window.get()))
     {
