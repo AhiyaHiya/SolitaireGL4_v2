@@ -29,11 +29,13 @@ auto compile_shader(const std::filesystem::path& shader_path, GLenum shader_type
     glGetShaderiv(shader_id, GL_COMPILE_STATUS, &compile_status);
     if (compile_status != GL_TRUE)
     {
-        // Get the error message
-        auto       log_length  = GLsizei(0);
-        const auto buffer_size = GLsizei(1024);
-        auto       info_log    = std::string(buffer_size, '\0');
-        glGetShaderInfoLog(shader_id, buffer_size, &log_length, info_log.data());
+        // Get the error message length
+        auto log_length = GLsizei(0);
+        glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &log_length);
+
+        // Now get the error message
+        auto info_log = std::string(log_length, '\0');
+        glGetShaderInfoLog(shader_id, log_length, nullptr, info_log.data());
 
         // Delete the shader since we have a failed status
         glDeleteShader(shader_id);
@@ -80,16 +82,18 @@ auto create_program() -> std::expected<GLuint, error_message_t>
     glDeleteShader(vertex_shader_id);
     glDeleteShader(fragment_shader_id);
 
+    // Now see if any compile errors occurred
     auto program_linked = GLint();
     glGetProgramiv(program_id, GL_LINK_STATUS, &program_linked);
     if (program_linked != GL_TRUE)
     {
         // Get the size of the error message
         auto log_length = GLsizei(0);
-        glGetProgramInfoLog(program_id, 0, &log_length, nullptr);
+        glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &log_length);
 
+        // Now get the message
         auto err_message = std::string(log_length, '\0');
-        glGetProgramInfoLog(program_id, log_length, &log_length, err_message.data());
+        glGetProgramInfoLog(program_id, log_length, nullptr, err_message.data());
         return std::unexpected(err_message);
     }
 
