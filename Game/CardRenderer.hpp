@@ -25,4 +25,5 @@ struct CardRenderer
     std::vector<glm::vec4> uv_rects; // One per card (including back)
 };
 
-auto create_card_renderer() -> std::expected<CardRenderer, std::string>;
+auto create_card_renderer(GLuint program_id, GLuint vao_id, GLuint vbo_id)
+    -> std::expected<CardRenderer, std::string>;
