@@ -1,6 +1,7 @@
 // clang-format off
 #include <glad/gl.h>
 #include <GLFW/glfw3.h> // Ordering is important and this file must be included after glad
+#include <glm/gtc/type_ptr.hpp>
 // clang-format on
 
 #include "CardRenderer.hpp"
@@ -86,6 +87,23 @@ int main()
         return generic_error;
     }
     auto frames = frames_result.value();
+
+    // ...
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    auto projection = glm::ortho(0.0f, // left
+                                 static_cast<float>(width),
+                                 0.0f,                       // bottom → now 0
+                                 static_cast<float>(height), // top   → now height
+                                 -1.0f,
+                                 1.0f);
+    glUniformMatrix4fv(card_renderer.uProjection, // location
+                       1,                         // count
+                       GL_FALSE,                  // transpose
+                       glm::value_ptr(projection));
+    glUniform1i(glGetUniformLocation(card_renderer.shader_program, "uCardTextures"), 0);
     while (!glfwWindowShouldClose(window.get()))
     {
         // Boilerplate code for now
