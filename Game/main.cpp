@@ -104,11 +104,17 @@ int main()
                        GL_FALSE,                  // transpose
                        glm::value_ptr(projection));
     glUniform1i(glGetUniformLocation(card_renderer.shader_program, "uCardTextures"), 0);
+
+    // TODO: Implement card drawing logic
+    std::vector<DrawCommand> cards_to_draw;
+
     while (!glfwWindowShouldClose(window.get()))
     {
         // Boilerplate code for now
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        draw_cards(card_renderer, cards_to_draw);
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();

@@ -25,5 +25,14 @@ struct CardRenderer
     std::vector<glm::vec4> uv_rects; // One per card (including back)
 };
 
+struct DrawCommand
+{
+    glm::vec2 position;   // center in pixels
+    glm::vec2 size;       // e.g., {120, 180}
+    int       card_index; // 0..52 (52 = back)
+};
+
 auto create_card_renderer(GLuint program_id, GLuint vao_id, GLuint vbo_id)
     -> std::expected<CardRenderer, std::string>;
+
+void draw_cards(const CardRenderer& card_renderer, const std::vector<DrawCommand>& cards_to_draw);
