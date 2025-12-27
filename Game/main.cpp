@@ -4,6 +4,7 @@
 // clang-format on
 
 #include "CardRenderer.hpp"
+#include "JSON.hpp"
 #include "Shaders.hpp"
 #include "VertexBuffer.hpp"
 #include "Window.hpp"
@@ -78,6 +79,13 @@ int main()
     }
     auto card_renderer = card_renderer_result.value();
 
+    auto frames_result = create_frames();
+    if (!frames_result)
+    {
+        std::cerr << "Failed to create frames from JSON: " << frames_result.error() << "\n";
+        return generic_error;
+    }
+    auto frames = frames_result.value();
     while (!glfwWindowShouldClose(window.get()))
     {
         // Boilerplate code for now
