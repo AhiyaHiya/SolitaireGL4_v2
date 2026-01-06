@@ -63,8 +63,9 @@ int main()
         return generic_error;
     }
     auto program_id = program_result.value();
-    // TODO: Double check usage
-    // glUseProgram(program_id);
+
+    // Make program current so subsequent glUniform calls affect it
+    glUseProgram(program_id);
 
     // --------------------------- Create buffers ---------------------------
     auto vao_vbo_result = create_vao_vbo();
