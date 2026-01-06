@@ -4,6 +4,7 @@
 #include "Shaders.hpp"
 #include "VertexBuffer.hpp"
 
+#include <algorithm>
 #include <ranges>
 
 auto create_card_textures(std::shared_ptr<AssetImage> asset_image, const Frames& frames)
@@ -45,26 +46,53 @@ auto create_card_textures(std::shared_ptr<AssetImage> asset_image, const Frames&
     return std::make_pair(texture_id, uv_rects);
 }
 
+/*
+ Bind items within a 1400x1000 window
+ All images are width 256, and height 372
+*/
 auto create_initial_draw_commands(const Frames& frames) -> std::vector<DrawCommand>
 {
     auto cards = std::vector<DrawCommand>();
-    cards.reserve(52 + 1); // 52 cards + 1 back
+    cards.reserve(52); // 52 cards
 
-    for (auto const [index, item] : std::views::enumerate(frames))
+    constexpr auto window_width  = 1400.0f;
+    constexpr auto window_height = 1000.0f;
+
+    const auto& first_card   = frames.begin()->second;
+    const auto  atlas_card_w = first_card.w;
+    const auto  atlas_card_h = first_card.h;
+
+    constexpr auto cols = 13;
+    constexpr auto rows = 4;
+
+    const float aspect = atlas_card_h / atlas_card_w;
+
+    // Compute the maximum card width that will fit both horizontally and vertically
+    const auto max_w_by_cols = window_width / static_cast<float>(cols);
+    const auto max_w_by_rows = (window_height / static_cast<float>(rows)) / aspect;
+    const auto card_w        = std::min(max_w_by_cols, max_w_by_rows);
+    const auto card_h        = card_w * aspect;
+
+    // Center the grid inside the window
+    const auto grid_w   = cols * card_w;
+    const auto grid_h   = rows * card_h;
+    const auto margin_x = (window_width - grid_w) / 2.0f;
+    const auto margin_y = (window_height - grid_h) / 2.0f;
+
+    // Take only the first 52 frames (skip the 53rd which is the card back)
+    for (auto const [index, item] : std::views::enumerate(frames) | std::views::take(52))
     {
-        const auto& frame = item.second;
+        const int idx = static_cast<int>(index);
+        const int r   = idx / cols;
+        const int c   = idx % cols;
 
-        const auto width    = static_cast<float>(frame.w);
-        const auto height   = static_cast<float>(frame.h);
-        const auto x        = static_cast<float>(frame.x);
-        const auto y        = static_cast<float>(frame.y);
-        const auto center_x = x + width / 2.0f;
-        const auto center_y = y + height / 2.0f;
+        const float center_x = margin_x + static_cast<float>(c) * card_w + card_w / 2.0f;
+        const float center_y = margin_y + static_cast<float>(r) * card_h + card_h / 2.0f;
 
         cards.push_back(DrawCommand{
             .position   = glm::vec2{center_x, center_y},
-            .size       = glm::vec2{width, height},
-            .card_index = static_cast<int>(index),
+            .size       = glm::vec2{card_w, card_h},
+            .card_index = idx,
         });
     }
     return cards;
