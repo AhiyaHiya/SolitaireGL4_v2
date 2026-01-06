@@ -4,6 +4,7 @@
 #include <glm/gtc/type_ptr.hpp>
 // clang-format on
 
+#include "Assets.hpp"
 #include "CardRenderer.hpp"
 #include "JSON.hpp"
 #include "Shaders.hpp"
@@ -26,6 +27,7 @@ int main()
         return generic_error;
     }
 
+    // --------------------------- Create Window ---------------------------
     constexpr auto width  = 1400;
     constexpr auto height = 1000;
 
@@ -42,6 +44,7 @@ int main()
     auto window = window_result.value();
     glfwMakeContextCurrent(window.get());
 
+    // --------------------------- Get OpenGL Version ---------------------------
     const auto opengl_version = gladLoadGL(glfwGetProcAddress);
     if (opengl_version == 0)
     {
@@ -52,7 +55,7 @@ int main()
            GLAD_VERSION_MAJOR(opengl_version),
            GLAD_VERSION_MINOR(opengl_version));
 
-    // Compile program
+    // --------------------------- Compile Program ---------------------------
     auto program_result = create_program();
     if (!program_result)
     {
@@ -63,7 +66,7 @@ int main()
     // TODO: Double check usage
     // glUseProgram(program_id);
 
-    // Create buffers
+    // --------------------------- Create buffers ---------------------------
     auto vao_vbo_result = create_vao_vbo();
     if (!vao_vbo_result)
     {
@@ -72,13 +75,14 @@ int main()
     }
     auto [vao_id, vbo_id] = vao_vbo_result.value();
 
-    auto card_renderer_result = create_card_renderer(program_id, vao_id, vbo_id);
-    if (!card_renderer_result)
+    // --------------------------- Load Atlas ---------------------------
+    auto atlas_result = load_png_data();
+    if (!atlas_result)
     {
-        std::cerr << "Failed to create card renderer: " << card_renderer_result.error() << "\n";
+        std::cerr << "Failed to load PNG data: " << atlas_result.error() << "\n";
         return generic_error;
     }
-    auto card_renderer = card_renderer_result.value();
+    auto atlas = atlas_result.value();
 
     auto frames_result = create_frames();
     if (!frames_result)
@@ -86,7 +90,22 @@ int main()
         std::cerr << "Failed to create frames from JSON: " << frames_result.error() << "\n";
         return generic_error;
     }
-    auto frames = frames_result.value();
+    auto frames                 = frames_result.value();
+    auto [texture_id, uv_rects] = create_card_textures(atlas, frames);
+
+    // --------------------------- Card Renderer ---------------------------
+    auto card_renderer =
+        CardRenderer{.shader_program = program_id,
+                     .texture_array  = texture_id,
+                     .vao            = vao_id,
+                     .vbo            = vbo_id,
+
+                     .uProjection = glGetUniformLocation(program_id, "uProjection"),
+                     .uPosition   = glGetUniformLocation(program_id, "uPosition"),
+                     .uSize       = glGetUniformLocation(program_id, "uSize"),
+                     .uTexRect    = glGetUniformLocation(program_id, "uTexRect"),
+
+                     .uv_rects = std::move(uv_rects)};
 
     // ...
     glDisable(GL_DEPTH_TEST);
@@ -105,8 +124,7 @@ int main()
                        glm::value_ptr(projection));
     glUniform1i(glGetUniformLocation(card_renderer.shader_program, "uCardTextures"), 0);
 
-    // TODO: Implement card drawing logic
-    std::vector<DrawCommand> cards_to_draw;
+    auto cards_to_draw = create_initial_draw_commands(frames);
 
     while (!glfwWindowShouldClose(window.get()))
     {
@@ -114,6 +132,7 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // TODO: Implement card drawing logic
         draw_cards(card_renderer, cards_to_draw);
 
         glfwSwapBuffers(window.get());
