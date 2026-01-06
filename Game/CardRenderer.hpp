@@ -8,6 +8,7 @@
 // clang-format on
 
 #include <expected>
+#include <memory>
 #include <vector>
 
 struct CardRenderer
@@ -32,7 +33,10 @@ struct DrawCommand
     int       card_index; // 0..52 (52 = back)
 };
 
-auto create_card_renderer(GLuint program_id, GLuint vao_id, GLuint vbo_id)
-    -> std::expected<CardRenderer, std::string>;
+class AssetImage;
+auto create_card_textures(std::shared_ptr<AssetImage> asset_image, const Frames& frames)
+    -> std::pair<GLuint, std::vector<glm::vec4>>;
+
+auto create_initial_draw_commands(const Frames& frames) -> std::vector<DrawCommand>;
 
 void draw_cards(const CardRenderer& card_renderer, const std::vector<DrawCommand>& cards_to_draw);

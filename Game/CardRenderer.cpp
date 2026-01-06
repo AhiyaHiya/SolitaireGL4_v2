@@ -1,24 +1,73 @@
 #include "CardRenderer.hpp"
 
+#include "Assets.hpp"
 #include "Shaders.hpp"
 #include "VertexBuffer.hpp"
 
-auto create_card_renderer(GLuint program_id, GLuint vao_id, GLuint vbo_id)
-    -> std::expected<CardRenderer, std::string>
+#include <ranges>
+
+auto create_card_textures(std::shared_ptr<AssetImage> asset_image, const Frames& frames)
+    -> std::pair<GLuint, std::vector<glm::vec4>>
 {
-    return CardRenderer{
-        .shader_program = program_id,
-        .texture_array  = 0,
-        .vao            = vao_id,
-        .vbo            = vbo_id,
+    auto           texture_id    = GLuint();
+    constexpr auto texture_count = GLsizei(1);
+    glGenTextures(texture_count, &texture_id);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
 
-        .uProjection = glGetUniformLocation(program_id, "uProjection"),
-        .uPosition   = glGetUniformLocation(program_id, "uPosition"),
-        .uSize       = glGetUniformLocation(program_id, "uSize"),
-        .uTexRect    = glGetUniformLocation(program_id, "uTexRect"),
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        .uv_rects = std::vector<glm::vec4>{},
-    };
+    glTexImage2D(GL_TEXTURE_2D, // target
+                 0,             // level
+                 GL_RGBA8,      // internal format
+                 asset_image->width(),
+                 asset_image->height(),
+                 0, // border
+                 GL_RGBA,
+                 GL_UNSIGNED_BYTE, // type of stbi_uc
+                 asset_image->data().get());
+
+    auto uv_rects = std::vector<glm::vec4>{};
+    uv_rects.reserve(frames.size());
+
+    for (const auto& [frame_name, item] : frames)
+    {
+        auto min_u   = static_cast<float>(item.x) / asset_image->width();
+        auto min_v   = static_cast<float>(item.y) / asset_image->height();
+        auto scale_u = static_cast<float>(item.w) / asset_image->width();
+        auto scale_v = static_cast<float>(item.h) / asset_image->height();
+
+        uv_rects.emplace_back(min_u, min_v, scale_u, scale_v);
+    }
+
+    return std::make_pair(texture_id, uv_rects);
+}
+
+auto create_initial_draw_commands(const Frames& frames) -> std::vector<DrawCommand>
+{
+    auto cards = std::vector<DrawCommand>();
+    cards.reserve(52 + 1); // 52 cards + 1 back
+
+    for (auto const [index, item] : std::views::enumerate(frames))
+    {
+        const auto& frame = item.second;
+
+        const auto width    = static_cast<float>(frame.w);
+        const auto height   = static_cast<float>(frame.h);
+        const auto x        = static_cast<float>(frame.x);
+        const auto y        = static_cast<float>(frame.y);
+        const auto center_x = x + width / 2.0f;
+        const auto center_y = y + height / 2.0f;
+
+        cards.push_back(DrawCommand{
+            .position   = glm::vec2{center_x, center_y},
+            .size       = glm::vec2{width, height},
+            .card_index = static_cast<int>(index),
+        });
+    }
+    return cards;
 }
 
 void draw_cards(const CardRenderer& card_renderer, const std::vector<DrawCommand>& cards_to_draw)
