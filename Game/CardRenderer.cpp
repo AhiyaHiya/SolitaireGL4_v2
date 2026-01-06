@@ -59,13 +59,13 @@ auto create_initial_draw_commands(const Frames& frames) -> std::vector<DrawComma
     constexpr auto window_height = 1000.0f;
 
     const auto& first_card   = frames.begin()->second;
-    const auto  atlas_card_w = first_card.w;
-    const auto  atlas_card_h = first_card.h;
+    const auto  atlas_card_w = static_cast<float>(first_card.w);
+    const auto  atlas_card_h = static_cast<float>(first_card.h);
 
     constexpr auto cols = 13;
     constexpr auto rows = 4;
 
-    const float aspect = atlas_card_h / atlas_card_w;
+    const auto aspect = atlas_card_h / atlas_card_w;
 
     // Compute the maximum card width that will fit both horizontally and vertically
     const auto max_w_by_cols = window_width / static_cast<float>(cols);
