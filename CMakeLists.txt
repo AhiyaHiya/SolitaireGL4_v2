@@ -8,7 +8,7 @@ set(CMAKE_CXX_COMPILER "g++" CACHE STRING "C++ compiler" FORCE)
 set(CMAKE_C_COMPILER "gcc" CACHE STRING "C compiler" FORCE)
 
 # --------------------- Dependencies ---------------------
-find_package(glfw3  CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 
 # Download CPM.cmake
 file(
@@ -29,6 +29,8 @@ CPMAddPackage("gh:google/googletest@1.17.0")
 set(GAME_BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(solitaire
+        Game/Assets.cpp
+        Game/Assets.hpp
         Game/CardRenderer.cpp
         Game/CardRenderer.hpp
         Game/File.cpp
