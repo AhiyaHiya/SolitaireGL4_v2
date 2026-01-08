@@ -6,6 +6,7 @@
 
 #include "Assets.hpp"
 #include "CardRenderer.hpp"
+#include "Cards.hpp"
 #include "JSON.hpp"
 #include "Shaders.hpp"
 #include "VertexBuffer.hpp"

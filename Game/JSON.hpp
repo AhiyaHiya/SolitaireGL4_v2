@@ -7,8 +7,6 @@
 #include <expected>
 #include <string>
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Frame, x, y, w, h)
-
 /// ----------------------------------------------------------------
 /// @brief Use this function to create a unordered map of frames from the JSON file.
 /// @return A std::expected containing the frames or an error message.
@@ -18,4 +16,4 @@ auto create_frames() -> std::expected<Frames, error_message_t>;
 /// ----------------------------------------------------------------
 /// @brief Load JSON data from the Cards.json file.
 /// @return A std::expected containing the JSON data or an error message.
-auto load_json_data() -> std::expected<nlohmann::json, error_message_t>;
+auto load_json_data() -> std::expected<nlohmann::ordered_json, error_message_t>;

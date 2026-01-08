@@ -33,6 +33,8 @@ add_executable(solitaire
         Game/Assets.hpp
         Game/CardRenderer.cpp
         Game/CardRenderer.hpp
+        Game/Cards.cpp
+        Game/Cards.hpp
         Game/File.cpp
         Game/File.hpp
         Game/JSON.cpp

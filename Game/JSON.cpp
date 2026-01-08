@@ -2,6 +2,8 @@
 
 #include <filesystem>
 #include <fstream>
+#include <iostream>
+#include <typeinfo>
 
 auto create_frames() -> std::expected<Frames, error_message_t>
 {
@@ -15,19 +17,30 @@ auto create_frames() -> std::expected<Frames, error_message_t>
     {
         return std::unexpected("JSON is missing the top-level 'frames' object");
     }
-    auto& frames_object = json["frames"];
-    try
+
+    const auto& frames_object = json["frames"];
+    const auto& frames_items  = frames_object.items();
+    auto        frames        = Frames{};
+
+    // index is important in that it gives us a known position in the atlas
+    // which is needed for later OpenGL command calls to access data in uv_rects
+    for (const auto& [index, item] : std::ranges::views::enumerate(frames_items))
     {
-        auto frames = frames_object.get<Frames>();
-        return frames;
+        const auto& key        = item.key();
+        const auto& frame_data = item.value();
+
+        auto frame = Frame{
+            .x = frame_data["x"].get<std::int32_t>(),
+            .y = frame_data["y"].get<std::int32_t>(),
+            .w = frame_data["w"].get<std::int32_t>(),
+            .h = frame_data["h"].get<std::int32_t>(),
+        };
+        frames[key] = std::make_pair(frame, index);
     }
-    catch (const nlohmann::json::exception& e)
-    {
-        return std::unexpected(std::string("Failed to parse frames data: ") + e.what());
-    }
+    return frames;
 }
 
-auto load_json_data() -> std::expected<nlohmann::json, error_message_t>
+auto load_json_data() -> std::expected<nlohmann::ordered_json, error_message_t>
 {
     // Load JSON data from file
     const auto current_working_path = std::filesystem::current_path();
@@ -41,7 +54,7 @@ auto load_json_data() -> std::expected<nlohmann::json, error_message_t>
     auto json_file_stream = std::ifstream(cards_path.string());
     try
     {
-        return nlohmann::json::parse(json_file_stream); // This could throw
+        return nlohmann::ordered_json::parse(json_file_stream); // This could throw
     }
     catch (const std::exception& e)
     {
