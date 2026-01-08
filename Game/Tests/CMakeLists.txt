@@ -27,6 +27,16 @@ target_link_options(SolitaireTests
         "-Wl,-rpath,/usr/local/gcc-15/lib64"
 )
 
+# Ensure the test target is built with debug symbols and without optimizations
+if (MSVC)
+    # Disable optimizations and enable debug info for MSVC
+    target_compile_options(SolitaireTests PRIVATE /Od /Zi)
+    target_link_options(SolitaireTests PRIVATE /DEBUG)
+else()
+    # For GCC/Clang: disable optimization and include debug symbols
+    target_compile_options(SolitaireTests PRIVATE -O0 -g)
+endif()
+
 # --------------------- Copy assets ---------------------
 add_custom_command(
     TARGET SolitaireTests POST_BUILD
