@@ -92,8 +92,13 @@ int main()
         std::cerr << "Failed to create frames from JSON: " << frames_result.error() << "\n";
         return generic_error;
     }
-    auto frames                 = frames_result.value();
-    auto [texture_id, uv_rects] = create_card_textures(atlas, frames);
+    auto frames = frames_result.value();
+
+    // Read environment flags
+    const bool debug_overlay_env = (std::getenv("SOLITAIRE_DEBUG_OVERLAY") != nullptr);
+    auto [texture_id, uv_rects]  = create_card_textures(atlas, frames);
+
+    auto frame_positions = create_frames_position(frames);
 
     // --------------------------- Card Renderer ---------------------------
     auto card_renderer =
@@ -127,6 +132,7 @@ int main()
     glUniform1i(glGetUniformLocation(card_renderer.shader_program, "uCardTextures"), 0);
 
     auto cards_to_draw = create_initial_draw_commands(frames);
+    auto cards_to_draw = create_initial_draw_commands(frames, frame_positions);
 
     while (!glfwWindowShouldClose(window.get()))
     {
