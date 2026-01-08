@@ -6,6 +6,8 @@ in vec4 vTexRect;
 out vec4 FragColor;
 
 uniform sampler2D uCardTextures;
+uniform bool uDebugOverlay;
+uniform vec4 uDebugColor;
 
 void main()
 {
@@ -20,5 +22,10 @@ void main()
     float dist = length(cornerDist);
     if (dist > 0.2) discard;
 
-    FragColor = vec4(texColor, 1.0);
+    if (uDebugOverlay) {
+        // When debug overlay is enabled, output the solid debug color
+        FragColor = uDebugColor;
+    } else {
+        FragColor = vec4(texColor, 1.0);
+    }
 }

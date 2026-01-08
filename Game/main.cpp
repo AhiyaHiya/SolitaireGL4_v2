@@ -107,10 +107,12 @@ int main()
                      .vao            = vao_id,
                      .vbo            = vbo_id,
 
-                     .uProjection = glGetUniformLocation(program_id, "uProjection"),
-                     .uPosition   = glGetUniformLocation(program_id, "uPosition"),
-                     .uSize       = glGetUniformLocation(program_id, "uSize"),
-                     .uTexRect    = glGetUniformLocation(program_id, "uTexRect"),
+                     .uProjection   = glGetUniformLocation(program_id, "uProjection"),
+                     .uPosition     = glGetUniformLocation(program_id, "uPosition"),
+                     .uSize         = glGetUniformLocation(program_id, "uSize"),
+                     .uTexRect      = glGetUniformLocation(program_id, "uTexRect"),
+                     .uDebugOverlay = glGetUniformLocation(program_id, "uDebugOverlay"),
+                     .uDebugColor   = glGetUniformLocation(program_id, "uDebugColor"),
 
                      .uv_rects = std::move(uv_rects)};
 
@@ -131,7 +133,17 @@ int main()
                        glm::value_ptr(projection));
     glUniform1i(glGetUniformLocation(card_renderer.shader_program, "uCardTextures"), 0);
 
-    auto cards_to_draw = create_initial_draw_commands(frames);
+    // Initialize debug uniforms (off by default)
+    if (card_renderer.uDebugOverlay != -1)
+    {
+        glUniform1i(card_renderer.uDebugOverlay, GL_FALSE);
+    }
+    if (card_renderer.uDebugColor != -1)
+    {
+        // Semi-transparent green
+        glUniform4f(card_renderer.uDebugColor, 0.0f, 1.0f, 0.0f, 0.35f);
+    }
+
     auto cards_to_draw = create_initial_draw_commands(frames, frame_positions);
 
     while (!glfwWindowShouldClose(window.get()))
@@ -140,8 +152,9 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // TODO: Implement card drawing logic
-        draw_cards(card_renderer, cards_to_draw);
+        // Draw cards; optionally draw debug overlay if the env var is set
+        draw_cards(
+            card_renderer, cards_to_draw, debug_overlay_env, glm::vec4{0.0f, 1.0f, 0.0f, 0.35f});
 
         glfwSwapBuffers(window.get());
         glfwPollEvents();
