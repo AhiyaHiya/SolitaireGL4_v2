@@ -61,10 +61,12 @@ target_link_libraries(solitaire
 )
 
 # Needed so that when app starts up, it can locate the shared libraries
-target_link_options(solitaire
-    PRIVATE
-        "-Wl,-rpath,/usr/local/gcc-15/lib64"
-)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_options(solitaire
+        PRIVATE
+            "-Wl,-rpath,/usr/local/gcc-15/lib64"
+    )
+endif()
 
 # --------------------- Tests ---------------------
 enable_testing()
