@@ -1,7 +1,9 @@
 {
   "dependencies": [
-    "glad",
     "glfw3",
-    "glm"
+    "glm",
+    "nlohmann-json",
+    "stb",
+    "gtest"
   ]
 }
