@@ -10,12 +10,13 @@ auto compile_shader(const std::filesystem::path& shader_path, GLenum shader_type
     auto content_result = read_file_content(shader_full_path);
     if (!content_result.has_value())
     {
-        return std::unexpected("Failed to read shader file: " + std::string(shader_full_path));
+        return std::unexpected("Failed to read shader file: " + shader_full_path.string() +
+                               " with error: " + content_result.error());
     }
     auto shader_source = content_result.value();
     if (shader_source.empty())
     {
-        return std::unexpected("Shader source is empty for file: " + std::string(shader_full_path));
+        return std::unexpected("Shader source is empty for file: " + shader_full_path.string());
     }
 
     auto           shader_id      = glCreateShader(shader_type);
