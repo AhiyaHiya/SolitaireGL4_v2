@@ -113,11 +113,18 @@ include(GoogleTest)
 add_subdirectory(Game/Tests)
 
 ##
-# Copy assets
+# Copy files
 add_custom_command(
     TARGET solitaire POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             ${CMAKE_SOURCE_DIR}/Assets
             $<TARGET_FILE_DIR:solitaire>/Assets
     COMMENT "Copying Assets folder to output directory"
+)
+add_custom_command(
+    TARGET solitaire POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/Shaders
+            $<TARGET_FILE_DIR:solitaire>/Shaders
+    COMMENT "Copying Shaders folder to output directory"
 )
