@@ -1,11 +1,39 @@
 cmake_minimum_required(VERSION 3.24)
+
+##
+# vcpkg portion
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    set(bootstrap_vcpkg_ext "bat")
+else()
+    set(bootstrap_vcpkg_ext "sh")
+endif()
+
+execute_process(
+        COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vcpkg/bootstrap-vcpkg.${bootstrap_vcpkg_ext}"
+        RESULT_VARIABLE bootstrap_vcpkg_result
+)
+
+if(NOT bootstrap_vcpkg_result EQUAL 0)
+    message(FATAL_ERROR "Bootstrapping failed with code: ${bootstrap_vcpkg_result}")
+else()
+    message(STATUS "Bootstrapping succeeded.")
+endif()
+
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        CACHE STRING "vcpkg toolchain file")
+# End vcpkg portion
+##
+
+# This has to be here
 project(Solitaire LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_COMPILER "g++" CACHE STRING "C++ compiler" FORCE)
-set(CMAKE_C_COMPILER "gcc" CACHE STRING "C compiler" FORCE)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(CMAKE_CXX_COMPILER "g++" CACHE STRING "C++ compiler" FORCE)
+    set(CMAKE_C_COMPILER "gcc" CACHE STRING "C compiler" FORCE)
+endif ()
 
 # --------------------- Dependencies ---------------------
 find_package(glfw3 CONFIG REQUIRED)
