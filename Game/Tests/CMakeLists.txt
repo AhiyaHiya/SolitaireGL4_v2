@@ -10,15 +10,16 @@ gtest_add_tests(TARGET SolitaireTests)
 target_include_directories(SolitaireTests
     PRIVATE
         "${GAME_BASE_DIRECTORY}/Game"
+        "${GLAD_INCLUDE_DIRS}"
+        "${Stb_INCLUDE_DIR}"
 )
 
 target_link_libraries(SolitaireTests
     PRIVATE
         glad
-        gtest
-        gtest_main
-        stb
 
+        GTest::gtest
+        GTest::gtest_main
         nlohmann_json::nlohmann_json
 )
 
