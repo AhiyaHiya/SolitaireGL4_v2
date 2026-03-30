@@ -4,10 +4,20 @@ A classic fun card game, written to demonstrate using OpenGL as your renderer, a
 
 Tested on Linux with X11 and with NVIDIA driver version 580.82.09.
 
+### Note
+GLAD is downloaded via glad.cmake file because vcpkg port only has older 1.x release.
 
 ### Setup
 
-For Linux (Debian based)
+GLAD uses jinja2 in Python, so:
+
+```
+python3 -m pip install --user jinja2
+# or
+python -m pip install --user jinja2
+```
+
+Linux needed packages (Debian based)
 
 ```
 sudo apt update
@@ -16,16 +26,13 @@ sudo apt-get install -y \
         libglew-dev \
         libglm-dev \
         libglfw3-dev \
-        
 ```
 
-Python dependency for GLAD:
-
+CMake command for Linux:
 ```
-python3 -m pip install --user jinja2
+cmake -S . -B build -G "Ninja"
 ```
-
-For Windows
+CMake command for Windows
 
 ```
 cmake -S . -B build -G "Visual Studio 18 2026"
