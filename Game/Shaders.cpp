@@ -5,7 +5,7 @@ auto compile_shader(const std::filesystem::path& shader_path, GLenum shader_type
     -> std::expected<GLuint, error_message_t>
 {
     auto current_working_path = std::filesystem::current_path();
-    auto shader_full_path     = current_working_path / shader_path;
+    auto shader_full_path     = (current_working_path / shader_path).make_preferred();
 
     auto content_result = read_file_content(shader_full_path);
     if (!content_result.has_value())
