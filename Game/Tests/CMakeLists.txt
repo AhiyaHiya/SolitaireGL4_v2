@@ -22,10 +22,12 @@ target_link_libraries(SolitaireTests
         nlohmann_json::nlohmann_json
 )
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 target_link_options(SolitaireTests
     PRIVATE
         "-Wl,-rpath,/usr/local/gcc-15/lib64"
 )
+endif()
 
 # Ensure the test target is built with debug symbols and without optimizations
 if (MSVC)
