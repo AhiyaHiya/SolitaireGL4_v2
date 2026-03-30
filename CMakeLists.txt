@@ -36,7 +36,7 @@ endif ()
 
 
 
-# --------------------- CPM ---------------------
+##
 # Download CPM.cmake
 file(
   DOWNLOAD
@@ -47,19 +47,19 @@ file(
 include(${CMAKE_CURRENT_BINARY_DIR}/cmake/CPM.cmake)
 
 # Now download the other headers/libraries
-#include(CMake/stb.cmake)
 include(CMake/glad.cmake)
-#CPMAddPackage("gh:nlohmann/json@3.11.3")
-#CPMAddPackage("gh:google/googletest@1.17.0")
 
-# --------------------- Dependencies ---------------------
+##
+# Dependencies
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
-find_package(Stb REQUIRED)
+find_package(GTest CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(Stb REQUIRED)
 
-# --------------------- Executable ---------------------
+##
+# Executable
 set(GAME_BASE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(solitaire
@@ -84,14 +84,17 @@ add_executable(solitaire
 )
 
 target_compile_features(solitaire PUBLIC cxx_std_23)
-target_include_directories(solitaire PRIVATE ${GLAD_INCLUDE_DIRS})
+target_include_directories(solitaire
+    PRIVATE
+        ${GLAD_INCLUDE_DIRS}
+        ${Stb_INCLUDE_DIR}
+)
 target_link_libraries(solitaire
     PRIVATE
-        glfw
-        stb
         glad
-        glm::glm
+        glfw
 
+        glm::glm
         nlohmann_json::nlohmann_json
 )
 
@@ -103,12 +106,14 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     )
 endif()
 
-# --------------------- Tests ---------------------
-# enable_testing()
-# include(GoogleTest)
-# add_subdirectory(Game/Tests)
+##
+# Tests
+enable_testing()
+include(GoogleTest)
+add_subdirectory(Game/Tests)
 
-# --------------------- Copy assets ---------------------
+##
+# Copy assets
 add_custom_command(
     TARGET solitaire POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
