@@ -25,6 +25,12 @@ Python dependency for GLAD:
 python3 -m pip install --user jinja2
 ```
 
+For Windows
+
+```
+cmake -S . -B build -G "Visual Studio 18 2026"
+```
+
 ### Refs
 
 C++ Bindings for OpenGL: https://github.com/cginternals/glbinding/
